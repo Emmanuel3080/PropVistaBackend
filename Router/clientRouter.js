@@ -1,11 +1,11 @@
 
 const express = require("express")
-const { Signup } = require("../ClientAuth/Auth")
+const { Signup, SignIn } = require("../ClientAuth/Auth")
 
 const clientRouter = express.Router()
 
 
 clientRouter.post("/auth/signup", Signup)
-
+clientRouter.post("/auth/signin", SignIn)
 
 module.exports = clientRouter

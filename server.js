@@ -9,7 +9,7 @@ const handleError = require("./HandleError/ErrorHandler");
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 
 app.listen(PORT, () => {
