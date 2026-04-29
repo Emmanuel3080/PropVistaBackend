@@ -30,6 +30,7 @@ const Signup = async (req, res, next) => {
             fullName: client?.fullName,
             id: client?._id,
             email: client?.email,
+            phoneNumber: client?.phoneNumber
         }
         return res.status(201).json({
             Status: "Success",
@@ -69,12 +70,48 @@ const SignIn = async (req, res, next) => {
             expiresIn: process.env.jwtUserExpiry
         })
 
-
+        const userDetails = {
+            fullName: client?.fullName,
+            id: client?._id,
+            email: client?.email,
+            phoneNumber: client?.phoneNumber
+        }
+   
         return res.status(200).json({
             Message: "Sign In Successful",
             Status: "Success",
-            data: client,
-            accessToken : generateToken
+            data: userDetails,
+            accessToken: generateToken
+        })
+    } catch (error) {        
+        console.log(error);
+        next(error)
+
+    }
+}
+
+
+const getClient = async (req, res, next) => {
+    const { clientId } = req.params
+    if (!clientId) {
+        return res.status(400).json({
+            Message: "User ID not provided",
+            Status: "Error"
+        });
+    }
+    try {
+        const user = await clientModel.findById(clientId)
+        if (!user) {
+            return res.status(404).json({
+                Message: "User Not Found",
+                Status: "Error"
+            })
+        }
+
+        return res.status(200).json({
+            Message: "User Information Fetched Successfully",
+            Status: "Success",
+            data: user
         })
     } catch (error) {
         console.log(error);
@@ -82,7 +119,98 @@ const SignIn = async (req, res, next) => {
 
     }
 }
+
+
+
+const allUser = async (req, res, next) => {
+    try {
+        const users = await clientModel.find()
+        if (!users) {
+            return res.status(404).json({
+                Message: "Unable to fetch users",
+                Status: "Error"
+            })
+        }
+
+        return res.status(200).json({
+            Message: "All Users Information Fetched Successfully",
+            Status: "Success",
+            No_Of_Users: users.length,
+            data: users
+        })
+
+
+    } catch (error) {
+        console.log(error);
+        next(error)
+
+    }
+}
+
+const updateUser = async (req, res, next) => {
+    const { userId } = req.params
+    if (!userId) {
+        return res.status(400).json({
+            Message: "UserId ID not provided",
+            Status: "Error"
+        });
+    }
+    try {
+        const user = await clientModel.findOneAndUpdate({ _id: userId }, { ...req.body }, { returnDocument: "after" })
+        if (!user) {
+            return res.status(404).json({
+                Message: "User not found",
+                Status: "Error"
+            });
+        }
+
+        return res.status(200).json({
+            Message: `${req.body.field || "User"} profile updated successfully`,
+            Status: "Success",
+            data: user
+        });
+    } catch (error) {
+        console.log(error);
+        next(error)
+
+    }
+}
+
+const verifyToken = async (req, res, next) => {
+    let token;
+
+    try {
+
+        if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+            token = req.headers.authorization.split(" ")[1]
+        }
+        if (!token) {
+            return res.status(400).json({
+                Message: "Token Not Found",
+                Status: "Error"
+            })
+        }
+
+        const { userId } = jwt.verify(token, process.env.jwtUserToken)
+
+        const user = await clientModel.findById(userId)
+        return res.status(200).json({
+            Message: "Token is valid",
+            Status: "Success",
+            user
+
+        })
+
+    } catch (error) {
+        console.log(error);
+        next(error)
+    }
+}
 module.exports = {
     Signup,
-    SignIn
+    SignIn,
+    getClient,
+    allUser,
+    updateUser,
+    verifyToken
 }

@@ -5,6 +5,7 @@ const cors = require("cors");
 const connectDatabase = require("./ConnectDatabase/dbConnect");
 const clientRouter = require("./Router/clientRouter");
 const handleError = require("./HandleError/ErrorHandler");
+const AgentRouter = require("./Router/AdminRouter");
 
 dotenv.config();
 
@@ -16,11 +17,12 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-app.use(express.json());   
+app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 
 app.use("/users", clientRouter);
+app.use("/agent", AgentRouter)
 
 app.get("/", (req, res) => {
     res.send("PropVista API is running...");
