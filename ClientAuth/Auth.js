@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const clientModel = require("../Model/clientModel")
 const dotenv = require("dotenv")
+const blackListedTokenModel = require("../Model/BlacklistedTokenModel")
 dotenv.config()
 const Signup = async (req, res, next) => {
     const { fullName, password, email } = req.body
@@ -76,14 +77,14 @@ const SignIn = async (req, res, next) => {
             email: client?.email,
             phoneNumber: client?.phoneNumber
         }
-   
+
         return res.status(200).json({
             Message: "Sign In Successful",
             Status: "Success",
             data: userDetails,
             accessToken: generateToken
         })
-    } catch (error) {        
+    } catch (error) {
         console.log(error);
         next(error)
 
@@ -206,11 +207,38 @@ const verifyToken = async (req, res, next) => {
         next(error)
     }
 }
+
+
+const logout = async (req, res, next) => {
+    const { token } = req.body
+
+    if (!token) {
+        return res.status(404).json({
+            Message: "Token Not Found",
+            Status: "Error"
+        })
+    }
+
+    try {
+
+        await blackListedTokenModel.create({ token })
+
+        return res.status(201).json({
+            Message: "Logout Successful, Token has been Blacklisted",
+            Status: "Error"
+        })
+        // const 
+    } catch (error) {
+        console.log(error);
+        next(error)
+    }
+}
 module.exports = {
     Signup,
     SignIn,
     getClient,
     allUser,
     updateUser,
-    verifyToken
+    verifyToken,
+    logout
 }

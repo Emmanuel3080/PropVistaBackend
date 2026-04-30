@@ -4,6 +4,7 @@ const dotenv = require("dotenv")
 dotenv.config()
 
 const bcrypt = require("bcryptjs")
+const blackListedTokenModel = require("../Model/BlacklistedTokenModel")
 
 const SignUp = async (req, res, next) => {
     const { password, fullName, email } = req.body
@@ -141,8 +142,18 @@ const verifyToken = async (req, res, next) => {
             })
         }
 
-        // Verify the Token
 
+        // Check if Token has been Blacklisted
+
+        const isTokenBlacklisted = await blackListedTokenModel.findOne({ token: token })
+        if (isTokenBlacklisted) {
+            return res.status(400).json({
+                Message: "Token has been Blacklisted",
+                Status: "Error"
+            })
+        }
+
+        // Verify the Token
         const { userId } = await jwt.verify(token, process.env.jwtAgentToken)
 
         const user = await AgentModel.findById(userId)
@@ -196,9 +207,88 @@ const updateAgent = async (req, res, next) => {
     }
 }
 
+const logout = async (req, res, next) => {
+    const { token } = req.body
+
+    if (!token) {
+        return res.status(404).json({
+            Message: "Token Not Found",
+            Status: "Error"
+        })
+    }
+
+    try {
+
+        await blackListedTokenModel.create({ token })
+
+        return res.status(201).json({
+            Message: "Logout Successful, Token has been Blacklisted",
+            Status: "Error"
+        })
+        // const 
+    } catch (error) {
+        console.log(error);
+        next(error)
+    }
+}
+
+
+
+const getSingleAgent = async (req, res, next) => {
+    const { agentId } = req.params
+    try {
+        const agent = await AgentModel.findById(agentId)
+
+        if (!agent) {
+            return res.status(404).json({
+                Message: "Agent Not Found",
+                Status: "Error"
+            })
+        }
+
+        return res.status(200).json({
+            Message: "Agent Details Feched Successfuly",
+            Status: "Success",
+            agent
+        })
+    } catch (error) {
+        console.log(error);
+        next(error)
+
+    }
+}
+
+
+const getAllAgents = async (req, res, next) => {
+    try {
+        const agents = await AgentModel.find()
+
+        if (!agents) {
+            return res.status(404).json({
+                Message: "Unable to Fetch All Agents",
+                Status: "Error"
+            })
+        }
+
+
+        return res.status(200).json({
+            Message: "All Agent Details Fetched",
+            Status: "Success",
+            No_of_Registered_Agents: agents.length,
+            agents
+        })
+    } catch (error) {
+        console.log(error);
+        next(error)
+
+    }               
+}
 module.exports = {
     SignUp,
     SignIn,
     updateAgent,
-    verifyToken
+    getSingleAgent,
+    getAllAgents,
+    verifyToken,
+    logout
 }       
