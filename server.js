@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
     res.send("PropVista API is running...");
 });
 
-connectDatabase()
+connectDatabase()    
 
 
 

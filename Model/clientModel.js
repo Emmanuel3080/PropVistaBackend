@@ -11,7 +11,7 @@ const clientSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    password: {     
+    password: {
         type: String,
         required: true,
         select: false
@@ -19,6 +19,12 @@ const clientSchema = new mongoose.Schema({
     phoneNumber: {
         type: String,
         required: true
+    },
+    role: {
+        type: String,
+        enum: ["user", "Agent"],
+        default: "user"
+       
     }
 }, { timestamps: true })
 

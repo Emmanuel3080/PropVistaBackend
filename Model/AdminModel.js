@@ -41,6 +41,12 @@ const AgentSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  role: {
+    type: String,
+    enum: ["user", "Agent"],
+    default: "Agent"
+
   }
 
 }, { timestamps: true });

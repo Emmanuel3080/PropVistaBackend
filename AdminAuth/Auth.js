@@ -16,7 +16,7 @@ const SignUp = async (req, res, next) => {
             Status: "Error"
         })
     }
-    try {
+    try {                             
 
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
@@ -45,7 +45,7 @@ const SignUp = async (req, res, next) => {
             Status: "Success",
             data: agentInfo
         })
-
+     
 
     } catch (error) {
         console.log(error);
@@ -77,7 +77,7 @@ const SignIn = async (req, res, next) => {
                 Status: "Error"
             })
         }
-
+                              
 
         // return res.status(200).json({
         //     user

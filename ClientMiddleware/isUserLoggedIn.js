@@ -37,12 +37,12 @@ const isUserLoggedIn = async (req, res, next) => {
         // Check if token has expired/valid; (jwt)
 
         const { userId } = await jwt.verify(token, process.env.jwtUserToken)
-
+        
 
         const user = await clientModel.findById(userId)
 
         req.user = user
-        next()
+        next()       
     } catch (error) {
         console.log(error);
         next(error)
