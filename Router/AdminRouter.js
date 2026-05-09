@@ -4,7 +4,7 @@ const uploadAdminProfile = require("../ImagesMiddleware/UploadProfilepic")
 const { SignUp, SignIn, verifyToken, updateAgent, logout, getSingleAgent, getAllAgents } = require("../AdminAuth/Auth")
 const isAgentLoggedIn = require("../AgentMiddleware/isAgentLoggedIn")
 const uploadPropertyImg = require("../ImagesMiddleware/UploadProperty")
-const { postProperty, allProperties } = require("../Controller/PropertyController")
+const { postProperty, allProperties, AgentProperties } = require("../Controller/PropertyController")
 
 
 const AgentRouter = expresss.Router()
@@ -24,8 +24,9 @@ AgentRouter.post("/auth/logout", logout)
 
 // Property
 AgentRouter.post("/post/property", uploadPropertyImg.single("image"), isAgentLoggedIn, postProperty)
+AgentRouter.get("/agent_property/:AgentId", isAgentLoggedIn, AgentProperties)
 
-     
+
 // For Users(Mostly)          
 // Just testing for Agents
 AgentRouter.get("/property/all", isAgentLoggedIn, allProperties)

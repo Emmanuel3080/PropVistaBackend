@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
 });
 
 connectDatabase()    
-
+                                
 
 
 app.use("/{*any}", handleError)
@@ -38,4 +38,4 @@ app.all("/{*any}", (req, res) => {
     res.status(500).json({
         Message: `${req.method} ${req.originalUrl} is not a vaild endpoint on this server`,
     });
-});
+});   
