@@ -2,7 +2,7 @@
 const express = require("express")
 const { Signup, SignIn, verifyToken, getClient, allUser, updateUser, logout } = require("../ClientAuth/Auth")
 const isUserLoggedIn = require("../ClientMiddleware/isUserLoggedIn")
-const { allProperties } = require("../Controller/PropertyController")
+const { allProperties, singleProperty } = require("../Controller/PropertyController")
 
 const clientRouter = express.Router()
 
@@ -21,5 +21,7 @@ clientRouter.post("/logout", logout)
 
 // Properties EndPoints
 clientRouter.get("/property/all", isUserLoggedIn, allProperties)
+clientRouter.get("/property/single/:propertyId", isUserLoggedIn, singleProperty)
 
 module.exports = clientRouter
+      

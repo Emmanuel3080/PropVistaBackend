@@ -23,10 +23,10 @@ const postProperty = async (req, res, next) => {
 
     try {
         // FIXED LINE: Use the spread operator (...) 
-        const property = await propertyModel.create({ 
-            ...propertyData, 
-            agent: agentId, 
-            image: propertyImage.path 
+        const property = await propertyModel.create({
+            ...propertyData,
+            agent: agentId,
+            image: propertyImage.path
         });
 
         if (!property) {
@@ -53,8 +53,26 @@ const singleProperty = async (req, res, next) => {
     const { propertyId } = req.params
 
     try {
+        const property = await propertyModel.findById(propertyId).populate({
+            path: "agent",
+            select: "fullName email phone agencyName profileImage"
+        })
+        if (!property) {
+            return res.status(400).json({
+                Message: "Property Not Found",
+                Status: "Error"
+            })
+        }
+
+        return res.status(200).json({
+            Message: "Property Fetched Successfully",
+            Status: "Success",
+            property
+        })
 
     } catch (error) {
+        console.log(error);
+        next(error)
 
     }
 
@@ -119,5 +137,6 @@ const AgentProperties = async (req, res, next) => {
 module.exports = {
     postProperty,
     allProperties,
-    AgentProperties
+    AgentProperties,
+    singleProperty
 }
