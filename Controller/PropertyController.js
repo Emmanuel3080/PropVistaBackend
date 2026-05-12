@@ -1,3 +1,4 @@
+const { findByIdAndDelete } = require("../Model/clientModel");
 const propertyModel = require("../Model/PropertyModel")
 
 const postProperty = async (req, res, next) => {
@@ -134,9 +135,34 @@ const AgentProperties = async (req, res, next) => {
     }
 }
 
+
+
+const deleteProperty = async (req, res, next) => {
+    const { propertiesId } = req.params
+    try {
+        const property = await propertyModel.findByIdAndDelete(propertiesId)
+
+        if (!property) {
+            return res.status(400).json({
+                Message: "Unable to delete Properties",
+                Status: "Error"
+            })
+        }
+        return res.status(200).json({
+            Message: "Property Deleted Successfully",
+            Status: "Success"
+        })
+    } catch (error) {
+        console.log(error);
+        next(error)
+
+    }
+}
+
 module.exports = {
     postProperty,
     allProperties,
     AgentProperties,
-    singleProperty
+    singleProperty,
+    deleteProperty
 }
