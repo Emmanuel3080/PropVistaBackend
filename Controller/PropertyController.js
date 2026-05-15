@@ -1,3 +1,4 @@
+const AppointmentModel = require("../Model/AppointmentModel");
 const { findByIdAndDelete } = require("../Model/clientModel");
 const propertyModel = require("../Model/PropertyModel")
 
@@ -148,8 +149,10 @@ const deleteProperty = async (req, res, next) => {
                 Status: "Error"
             })
         }
+
+        await AppointmentModel.deleteMany({ propertyId: propertiesId })
         return res.status(200).json({
-            Message: "Property Deleted Successfully",
+            Message: "Property and associated appointments deleted successfully",
             Status: "Success"
         })
     } catch (error) {

@@ -53,7 +53,7 @@ const SignIn = async (req, res, next) => {
 
         if (!client) {
             return res.status(400).json({
-                Message: "Email incorrect",
+                Message: "Email or Password incorrect",
                 Status: "Error"
             })
         }
